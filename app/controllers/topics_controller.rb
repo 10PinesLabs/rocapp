@@ -11,13 +11,13 @@ class TopicsController < ApplicationController
   end
 
   def show
-    topic = Topic.find(params[:id])
+    topic = Topic.where(id: params[:id])
     render json: topic
   end
 
   def update
-    topic = Topic.find(parms[:id])
-    topic.update(update_params)
+    topic = Topic.where(id: parms[:id])
+    topic.update(parms[:id], update_params)
     render json: topic
   end
 
@@ -29,5 +29,12 @@ class TopicsController < ApplicationController
 
   def update_params
     params.require(:topic).permit(:title, :body)
+  end
+
+  protected
+  def checkToken
+    authenticate_or_request_with_http_token do |token, options|
+      User.find_by(token)
+    end
   end
 end
